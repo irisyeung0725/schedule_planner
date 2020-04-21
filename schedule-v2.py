@@ -15,12 +15,15 @@ from matplotlib.lines import Line2D
 # ---------------------------------------- generated csv data ------------------------------------------------
 # input_df = DataFrame({"event": ["event1","event2",'event3'],"start_date": ["4/12/20","4/13/20","4/15/20"],
 #                     "end_date":['4/25/20','4/22/20','5/12/20'],'type':['type1','type2','type1']})
+# input_df = input_df.set_index('event')
+# input_df.to_excel('schedule.xlsx')
 # input_df.to_csv('schedule.csv')
 # ------------------------------------------------------------------------------------------------------------
 
 # read input csv file
-input_df = pd.read_csv("schedule.csv")
-
+input_df = pd.read_excel("schedule.xlsx")
+# input_df_excel = pd.read_excel("schedule.xlsx")
+# print(input_df_excel)
 # get length of input display events
 length = len(input_df['start_date'].tolist())
 
@@ -36,13 +39,13 @@ end_date_list = [date for date in input_df['end_date']]
 # convert start_date to datetime format
 start_date_list_time = []
 for date in start_date_list:
-    date = datetime.strptime(date, "%m/%d/%y")
+    date = datetime.strptime(str(date).split(" ")[0], "%Y-%m-%d")
     start_date_list_time.append(date)
 
 # convert end_date to datetime format
 end_date_list_time = []
 for date in end_date_list:
-    date = datetime.strptime(date, "%m/%d/%y")
+    date = datetime.strptime(str(date).split(" ")[0], "%Y-%m-%d")
     end_date_list_time.append(date)
 
 # ---------------------------------------- validate data input ------------------------------------------------
@@ -67,14 +70,14 @@ for date in day_difference_list:
 # a list of formatted start date for each event
 start_date_list_formatted = []
 for start_date in start_date_list:
-    # convert input start date to time format, then reformat it to certain format
-    date = datetime.strptime(start_date, "%m/%d/%y").strftime("%Y-%m-%d")
+    # creformat input dates to certain format
+    date = start_date.strftime("%Y-%m-%d")
     start_date_list_formatted.append(date) 
 # a list of formatted end date for each event
 end_date_list_formatted = []
 for end_date in end_date_list:
     # convert input start date to time format, then reformat it to certain format
-    date = datetime.strptime(end_date, "%m/%d/%y").strftime("%Y-%m-%d")
+    date = end_date.strftime("%Y-%m-%d")
     end_date_list_formatted.append(date)
 
 # create a two-dimensional list [[event tickles]] 
