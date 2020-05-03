@@ -21,9 +21,8 @@ from matplotlib.lines import Line2D
 # ------------------------------------------------------------------------------------------------------------
 
 # read input csv file
-input_df = pd.read_excel("schedule.xlsx")
-# input_df_excel = pd.read_excel("schedule.xlsx")
-# print(input_df_excel)
+input_df = pd.read_excel("schedule_v2.xlsx")
+
 # get length of input display events
 length = len(input_df['start_date'].tolist())
 
@@ -89,8 +88,10 @@ for i in range(len(date_handler_list)):
         start_date_list_time[i] += timedelta(days=7)
         date_formatted = start_date_list_time[i].strftime("%Y-%m-%d")
         date_ticker.append(date_formatted)
-        date_ticker.append(end_date_list_formatted[i])
         counter += 1
+    if end_date_list_formatted[i] != date_ticker[-1]:
+        date_ticker.append(end_date_list_formatted[i])
+        
     date_ticker_all.append(date_ticker)
 
 # define color order
@@ -100,9 +101,9 @@ order_list = []
 for i in range(length):
     if type_list[i] not in compare_list:
         compare_list.append(type_list[i])
-        order_list.append(i)
-    else:
-        order_list.append(compare_list.index(type_list[i]))
+
+for i in range(len(type_list)):
+    order_list.append(compare_list.index(type_list[i]))
 
 # create a list with idex for dataframe
 idx_list = []
@@ -122,16 +123,20 @@ for i in range(len(idx_list)-2):
 # get a dataframe that contains all events
 df = pd.DataFrame(index=union)
 
+# --------------------------------------------- predefined colors ------------------------------------------------
 # list of predefined colors 
+# so far it supports 7 event types
+# to add more color please go to the website below
 color = ['b','g','r','c','m','y','b']
 # matplotlib list of named colors --> https://matplotlib.org/3.1.0/gallery/color/named_colors.html
+# ----------------------------------------------------------------------------------------------------------------
 
 # get the order of color for the plot
 color_list = []
 for i in order_list:
     line_color = color[i]
     color_list.append(line_color)
-
+# print(color_list)
 # create column for each event
 for i in range(length):
     df['event%s' % str(i+1)] = df.index.to_series().apply(lambda x: (length-i) if x >= event_df_list[i].Date.min() and x <= event_df_list[i].Date.max() else np.NaN)
@@ -153,26 +158,38 @@ event_list = reversed(input_df['event'].tolist())
 p.set_yticklabels(event_list)
 
 # add legend for the plot
+# set legend color list
+legend_color = []
+for color in color_list:
+    if color not in legend_color:
+        legend_color.append(color)
 # set legend format
-lines = [Line2D([0], [0], color=c, linewidth=1, linestyle='-') for c in list(set(color_list))]
-# plot legend
-plt.legend(lines, input_df['type'].tolist())
+lines = [Line2D([0], [0], color=c, linewidth=1, linestyle='-') for c in legend_color]
 # add grid to the plot
 p.xaxis.grid()
 # add minor ticks to the plot
 p.xaxis.set_minor_locator(ticker.MultipleLocator(1))
 # add major ticks to the plot
 p.xaxis.set_major_locator(ticker.MultipleLocator(7))
-
-# change output shape (best value varies based on xrange and yrange)
-# p.set_aspect(2)
-
+# ----------------------------------------- change the shape of the plot ------------------------------------------
+# change output shape (best value varies based on xrange and yrange) --> 4 and 6 are recommended
+# p.set_aspect(6)
+# ----------------------------------------------------------------------------------------------------------------
+# ------------------------------------------- change font size ----------------------------------------------------
+# adjust the font size of the honrizontal tickers --> size 6 or 8 are recommended
+plt.xticks(fontsize=6)
+# adjust the font size of the vertical tickers --> size 8 or 10 are recommended
+plt.yticks(fontsize=8)
+# set legend size --> size 6 is recommended
+plt.legend(lines, compare_list, prop={'size': 6})
+# ----------------------------------------------------------------------------------------------------------------
 
 # ---------------------------------------- set title for the plot ------------------------------------------------
 # add title to the plot
 plt.title("Schedule")
 # ----------------------------------------------------------------------------------------------------------------
 # plot it 
-plt.show()
-    
+# plt.show()
+# save it
+plt.savefig('schedule_v2.png', bbox_inches='tight')
 
