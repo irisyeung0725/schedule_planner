@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.ticker as ticker
 from matplotlib.lines import Line2D
+import sys
+import os
 
 
 # ---------------------------------------- generated csv data ------------------------------------------------
@@ -20,8 +22,27 @@ from matplotlib.lines import Line2D
 # input_df.to_csv('schedule.csv')
 # ------------------------------------------------------------------------------------------------------------
 
-# read input csv file
-input_df = pd.read_excel("schedule_v2.xlsx")
+# ---------------------------------------- check number of input -------------------------------------------------
+if len(sys.argv) < 2:
+    print("\033[91mPlease upload a file!\033[0m")
+    quit()
+# ----------------------------------------------------------------------------------------------------------------
+
+# upload file via the shell
+input_file = sys.argv[1]
+
+# ---------------------------------------- check file type -------------------------------------------------------
+if os.path.basename(input_file).split('.')[-1] == 'xlsx':   
+    # read input excel file
+    input_df = pd.read_excel(input_file)
+elif os.path.basename(input_file).split('.')[-1] == 'csv':
+    # read input csv file
+    input_df = pd.read_csv(input_file)
+else: 
+    print("\033[91mPlease upload an excel/csv file!\033[0m")
+    quit()
+# ----------------------------------------------------------------------------------------------------------------
+
 
 # get length of input display events
 length = len(input_df['start_date'].tolist())
@@ -186,10 +207,12 @@ plt.legend(lines, compare_list, prop={'size': 6})
 
 # ---------------------------------------- set title for the plot ------------------------------------------------
 # add title to the plot
-plt.title("Schedule")
+title = input("\033[35mPlease enter the tile of the graph:\033[0m")
+plt.title(title)
 # ----------------------------------------------------------------------------------------------------------------
 # plot it 
 # plt.show()
 # save it
-plt.savefig('schedule_v2.png', bbox_inches='tight')
+graph_name = input("\033[35mPlease enter the name to save the graph(file type not needed):\033[0m")
+plt.savefig("./%s.png" % graph_name, bbox_inches='tight')
 
