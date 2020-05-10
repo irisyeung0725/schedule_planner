@@ -23,8 +23,13 @@ import os
 # ------------------------------------------------------------------------------------------------------------
 
 # ---------------------------------------- check number of input -------------------------------------------------
-if len(sys.argv) < 2:
-    print("\033[91mPlease upload a file!\033[0m")
+if len(sys.argv) < 4:   
+    if len(sys.argv) < 2:
+        print("\033[91mPlease upload a file!\033[0m")
+    elif len(sys.argv) < 3:
+        print("\033[91mPlease enter the title for the graph and a name for the file!\033[0m")
+    else:
+        print("\033[91mPlease give a name for your file\033[0m")
     quit()
 # ----------------------------------------------------------------------------------------------------------------
 
@@ -207,12 +212,12 @@ plt.legend(lines, compare_list, prop={'size': 6})
 
 # ---------------------------------------- set title for the plot ------------------------------------------------
 # add title to the plot
-title = input("\033[35mPlease enter the tile of the graph:\033[0m")
+title = str(sys.argv[2])
 plt.title(title)
 # ----------------------------------------------------------------------------------------------------------------
 # plot it 
 # plt.show()
 # save it
-graph_name = input("\033[35mPlease enter the name to save the graph(file type not needed):\033[0m")
+graph_name = str(sys.argv[3])
 plt.savefig("./%s.png" % graph_name, bbox_inches='tight')
 
