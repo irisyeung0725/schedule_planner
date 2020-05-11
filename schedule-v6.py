@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.ticker as ticker
 from matplotlib.lines import Line2D
+import matplotlib.pylab as pl
 import sys
 import os
 
@@ -35,7 +36,6 @@ if len(sys.argv) < 4:
 
 # upload file via the shell
 input_file = sys.argv[1]
-
 # ---------------------------------------- check file type -------------------------------------------------------
 if os.path.basename(input_file).split('.')[-1] == 'xlsx':   
     # read input excel file
@@ -47,7 +47,6 @@ else:
     print("\033[91mPlease upload an excel/csv file!\033[0m")
     quit()
 # ----------------------------------------------------------------------------------------------------------------
-
 
 # get length of input display events
 length = len(input_df['start_date'].tolist())
@@ -124,6 +123,7 @@ for i in range(len(date_handler_list)):
 type_list = input_df['type'].tolist()
 compare_list = []
 order_list = []
+# get unique type of the graph
 for i in range(length):
     if type_list[i] not in compare_list:
         compare_list.append(type_list[i])
@@ -153,7 +153,10 @@ df = pd.DataFrame(index=union)
 # list of predefined colors 
 # so far it supports 7 event types
 # to add more color please go to the website below
-color = ['b','g','r','c','m','y','b']
+# color = ['b','g','r','c','m','y','b']
+color = pl.cm.brg(np.linspace(0,0.9,len(compare_list)))
+# color = pl.cm.tab10(list(range(0,len(compare_list))))
+# print(colors)
 # matplotlib list of named colors --> https://matplotlib.org/3.1.0/gallery/color/named_colors.html
 # ----------------------------------------------------------------------------------------------------------------
 
@@ -162,6 +165,7 @@ color_list = []
 for i in order_list:
     line_color = color[i]
     color_list.append(line_color)
+
 # print(color_list)
 # create column for each event
 for i in range(length):
@@ -186,9 +190,13 @@ p.set_yticklabels(event_list)
 # add legend for the plot
 # set legend color list
 legend_color = []
-for color in color_list:
-    if color not in legend_color:
-        legend_color.append(color)
+for row in color_list:
+    if list(row) not in legend_color:
+        legend_color.append(list(row))
+
+# legend_color = np.vstack({tuple(row) for row in color_list})
+
+
 # set legend format
 lines = [Line2D([0], [0], color=c, linewidth=1, linestyle='-') for c in legend_color]
 # add grid to the plot
